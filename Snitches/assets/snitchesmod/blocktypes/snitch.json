@@ -1,0 +1,160 @@
+{
+  "code": "snitch",
+  "class": "BlockSnitch",
+  "entityClass": "BESnitch",
+  "variantgroups": [
+    {
+      "code": "wood",
+      "states": [
+        "aged"
+      ],
+      "loadFromProperties": "block/wood"
+
+    },
+    {
+      "loadFromProperties": "abstract/horizontalorientation"
+    }
+  ],
+  "behaviors": [
+    {
+      "name": "Lockable"
+    },
+    {
+      "name": "HorizontalOrientable",
+      "properties": {
+        "dropBlockFace": "east",
+        "drop": {
+          "type": "block",
+          "code": "snitch-{wood}-east"
+        }
+
+      }
+    },
+    {
+      "name": "Unstable"
+
+    },
+    {
+      "name": "Multiblock",
+      "properties": {
+        "sizex": 1,
+        "sizey": 2,
+        "sizez": 1,
+        "cposition": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        }
+      }
+    }
+  ],
+  "attributes": {
+    "fenceConnect": {
+      "north": false,
+      "east": false,
+      "west": false,
+      "south": false
+    }
+
+  },
+  "shapeByType": {
+    "*-north": {
+      "base": "block/snitch",
+      "rotateY": 0
+    },
+    "*-east": {
+      "base": "block/snitch",
+      "rotateY": 270
+    },
+    "*-west": {
+      "base": "block/snitch",
+      "rotateY": 90
+    },
+    "*-south": {
+      "base": "block/snitch",
+      "rotateY": 180
+    }
+  },
+  "creativeinventory": {
+    "general": [
+      "*-east"
+    ],
+    "decorative": [
+      "*-east"
+    ]
+  },
+  "blockmaterial": "Wood",
+  "replaceable": 900,
+  "resistance": 1.5,
+  "lightAbsorption": 1,
+  "texturesByType": {
+    "*": {
+      "opened-pages": {
+        "base": "block/apcsnitch"
+      },
+      "wood": {
+        "base": "game:block/wood/debarked/{wood}"
+      },
+      "book-back": {
+        "base": "game:block/cloth/leather/longstiches"
+      }
+    }
+  },
+  "sidesolidByType": {
+    "*": {
+      "all": false
+    }
+  },
+  "sideopaqueByType": {
+    "*": {
+      "all": false
+    }
+  },
+  "combustibleProps": {
+    "burnTemperature": 600,
+    "burnDuration": 30
+  },
+  "sounds": {
+    "place": "game:block/planks",
+    "hit": "game:block/planks",
+    "break": "game:block/planks",
+    "walk": "game:walk/wood"
+  },
+  "materialDensity": 600,
+  "heldTpIdleAnimation": "holdunderarm",
+  "heldTpUseAnimation": "twohandplaceblock",
+  "collisionSelectionBox": {
+    "x1": 0.071,
+    "y1": 0,
+    "z1": 0.077,
+    "x2": 0.9484,
+    "y2": 0.7284,
+    "z2": 0.9196
+  },
+  "tpHandTransform": {
+    "translation": {
+      "x": -1,
+      "y": -0.8,
+      "z": -0.8
+    },
+    "rotation": {
+      "x": 16,
+      "y": 13,
+      "z": -86
+    },
+    "scale": 0.54
+  },
+  "guiTransform": {
+    "translation": {
+      "x": -0,
+      "y": 6,
+      "z": 0
+    },
+    "rotation": {
+      "x": -24,
+      "y": -135,
+      "z": -3
+    },
+    "scale": 0.71
+  }
+}

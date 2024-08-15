@@ -1,0 +1,13 @@
+{
+    "type": "code",
+    "modid": "snitchesmod",
+    "name": "Snitches Mod",
+    "authors": [
+        "Dythanos"
+    ],
+    "description": "Snitches - A block made to record interactions by other players. A common Civ Craft mechanic, ported over to Vintage Story and expanded on. Credit to Novocain for thier previous work!",
+    "version": "1.0.0",
+    "dependencies": {
+        "game": ""
+    }
+}
