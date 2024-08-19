@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
-using Vintagestory.API.Common;
+﻿using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
@@ -13,8 +7,8 @@ using Vintagestory.API.Server;
 
 namespace snitches
 {
-    
-        
+
+
     public class Violation
     {
         public const string TRESSPASSED = "tresspassed ";
@@ -36,10 +30,10 @@ namespace snitches
 
         ICoreAPI api;
 
-       
+
         public string violationType { get; private set; }
 
-        
+
         public string date { get; private set; }
 
         public string time { get; private set; }
@@ -58,7 +52,7 @@ namespace snitches
         public Violation(string violationType, IServerPlayer player, BlockPos pos, string date, string time, Block block = null, Entity entity = null, CollectibleObject colObj = null)
         {
             api = player.Entity.Api;
-            
+
             this.violationType = violationType;
             this.playerName = player.PlayerName;
             this.playerUID = player.PlayerUID;
@@ -73,7 +67,8 @@ namespace snitches
 
         }
 
-        public Violation(string violationType, EntityPlayer player, BlockPos pos, string date, string time, Block block = null, Entity entity = null, CollectibleObject colObj = null) {
+        public Violation(string violationType, EntityPlayer player, BlockPos pos, string date, string time, Block block = null, Entity entity = null, CollectibleObject colObj = null)
+        {
 
             api = player.Api;
 
@@ -96,7 +91,7 @@ namespace snitches
             playerUID = tree.GetString("playerUID");
             api = world.Api;
 
-            
+
 
             violationType = tree.GetString("violationType");
             date = tree.GetString("date");
@@ -108,7 +103,7 @@ namespace snitches
             violationFinal = tree.GetString("violationFinal");
         }
 
-        
+
 
         public void ToTreeAttributes(ITreeAttribute tree)
         {
@@ -127,22 +122,22 @@ namespace snitches
 
         public override string ToString()
         {
-            if(violationFinal == null)
+            if (violationFinal == null)
             {
                 string temp = date + " " + playerName + " " + violationType;
 
                 switch (violationType)
                 {
                     case TRESSPASSED:
-                        
+
                     case ESCAPED:
                         temp += "at: " + pos.ToLocalPosition(api).X + ", " + pos.ToLocalPosition(api).Y + ", " + pos.ToLocalPosition(api).Z;// + "\n";
                         break;
 
                     case BLOCK_USED:
-                        
+
                     case BLOCK_PLACED:
-                                
+
                     case BLOCK_BROKE:
                         temp += (Lang.GetMatching(blockName) + " at: " + pos.ToLocalPosition(api).X + ", " + pos.ToLocalPosition(api).Y + ", " + pos.ToLocalPosition(api).Z); // + "\n");
                         break;
@@ -150,21 +145,21 @@ namespace snitches
 
                     case ENTITY_INTERACTED:
 
-                        
+
                     case ENTITY_HIT:
 
-                        
+
                     case ENTITY_KILLED:
 
-                        
+
                     case ENTITY_SPAWNED:
                         temp += (Lang.GetMatching(entityName) + " at: " + pos.ToLocalPosition(api).X + ", " + pos.ToLocalPosition(api).Y + ", " + pos.ToLocalPosition(api).Z); // + "\n");
                         break;
 
-                    case COLLECTIBLE_TOOK: 
-                                                
+                    case COLLECTIBLE_TOOK:
+
                     case COLLECTIBLE_PICKEDUP:
-                                                
+
                     case COLLECTIBLE_DROPPED:
                         temp += (Lang.GetMatching("item-" + collectibleName) + " at: " + pos.ToLocalPosition(api).X + ", " + pos.ToLocalPosition(api).Y + ", " + pos.ToLocalPosition(api).Z); // + "\n");
                         break;
@@ -172,10 +167,10 @@ namespace snitches
 
                     default:
                         break;
-                    
+
                 }
-           
-                
+
+
                 violationFinal = temp;
             }
 

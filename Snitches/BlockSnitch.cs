@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
-using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 
@@ -19,7 +14,7 @@ namespace snitches
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
             BESnitch snitch = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BESnitch;
-            
+
             return snitch?.OnInteract(byPlayer) == true;
 
         }
@@ -31,17 +26,17 @@ namespace snitches
             if (api.Side != EnumAppSide.Client) return;
             ICoreClientAPI capi = api as ICoreClientAPI;
 
-            List<ItemStack> bookStackList = new List<ItemStack>();            
+            List<ItemStack> bookStackList = new List<ItemStack>();
 
             foreach (Item item in api.World.Items)
             {
-                if(item.Code == null) continue;
+                if (item.Code == null) continue;
 
                 if (item is ItemBook)
                 {
                     bookStackList.Add(new ItemStack(item));
                 }
-                                
+
             }
 
             interactions = ObjectCacheUtil.GetOrCreate(api, "snitchBlockInteractions", () =>
@@ -70,7 +65,7 @@ namespace snitches
                         ActionLangCode = "blockhelp-snitch-writeviolations",
                         HotKeyCode = "ctrl",
                         MouseButton = EnumMouseButton.Right,
-                        Itemstacks = bookStackList.ToArray(),                       
+                        Itemstacks = bookStackList.ToArray(),
 
                         ShouldApply = (wi, bs, es) => {
                             BESnitch bes = api.World.BlockAccessor.GetBlockEntity(bs.Position) as BESnitch;

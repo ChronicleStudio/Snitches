@@ -1,12 +1,4 @@
-﻿using snitches;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Vintagestory.API.Common;
-using Vintagestory.API.Datastructures;
-using Vintagestory.API.MathTools;
+﻿using Vintagestory.API.Common;
 
 namespace snitches
 {
@@ -23,7 +15,7 @@ namespace snitches
         //    if (slot.Itemstack.Attributes.HasAttribute("SnitchBlockConnection"))
         //    {
         //        handling = EnumHandling.PreventSubsequent;
-                
+
 
         //    }
 

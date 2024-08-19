@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.MathTools;
@@ -10,7 +6,7 @@ using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 
 namespace snitches
-{ 
+{
     public class SnitchModSystem : ModSystem
     {
         ICoreAPI _api;
@@ -19,7 +15,7 @@ namespace snitches
 
         public override void Start(ICoreAPI api)
         {
-            
+
             _api = api;
 
             trackedPlayers = new Dictionary<string, List<BESnitch>>();
@@ -35,23 +31,23 @@ namespace snitches
             api.Event.DidUseBlock += Event_DidUseBlock;
             api.Event.DidPlaceBlock += Event_DidPlaceBlock;
             api.Event.DidBreakBlock += Event_DidBreakBlock;
-                       
+
 
             base.StartServerSide(api);
         }
 
-        
+
 
         private void Event_DidBreakBlock(IServerPlayer byPlayer, int oldblockId, BlockSelection blockSel)
         {
-            
+
             if (trackedPlayers.TryGetValue(byPlayer.PlayerName, out List<BESnitch> snitches))
             {
                 if (snitches != null)
                 {
                     foreach (BESnitch s in snitches)
                     {
-                        if(_api.World.BlockAccessor.GetBlock(blockSel.Position).Id == oldblockId) { return; }
+                        if (_api.World.BlockAccessor.GetBlock(blockSel.Position).Id == oldblockId) { return; }
 
                         string date = _api.World.Calendar.PrettyDate();
                         string time = _api.World.Calendar.ElapsedSeconds.ToString();
@@ -126,7 +122,7 @@ namespace snitches
         {
 
         }
-              
+
 
 
     }

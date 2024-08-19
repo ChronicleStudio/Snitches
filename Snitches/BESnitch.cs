@@ -1,18 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading.Tasks;
-using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
-using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
-using Vintagestory.API.Util;
-using Vintagestory.Common;
 using Vintagestory.GameContent;
-using Vintagestory.Server;
 
 namespace snitches
 {
@@ -76,9 +68,9 @@ namespace snitches
 
         private Queue<Violation> violationsQueue = new Queue<Violation>();
         private Queue<Violation> tempQueue = new Queue<Violation>();
-        
-        
-        
+
+
+
         public List<string> playersPinged;
         public List<string> playersTracked;
 
@@ -89,7 +81,7 @@ namespace snitches
         long? OnPlayerEnterListenerID;
         long? RecordCrimesListenerID;
 
-        
+
         public bool activated = false;
 
         private SnitchesServerConfig config => Api.ModLoader.GetModSystem<SnitchesModSystem>().config;
@@ -117,7 +109,8 @@ namespace snitches
             if (!config.snitchSneakable)
             {
                 trueSightRange = radius;
-            } else if (Block.Attributes["trueSightRange"].Exists)
+            }
+            else if (Block.Attributes["trueSightRange"].Exists)
             {
                 trueSightRange = Block.Attributes["trueSightRange"].AsInt(8);
             }
@@ -129,24 +122,25 @@ namespace snitches
             }
 
             playersTracked = new List<string>();
-                        
+
         }
-        
+
 
         public override void OnBlockUnloaded()
         {
             base.OnBlockUnloaded();
-            foreach(string player in playersTracked)
+            foreach (string player in playersTracked)
             {
-                
-                foreach(List<BESnitch> snitches in snitchMod.trackedPlayers.Values)
+
+                foreach (List<BESnitch> snitches in snitchMod.trackedPlayers.Values)
                 {
-                    if (snitches.Contains(this)){
+                    if (snitches.Contains(this))
+                    {
                         snitches.Remove(this);
                     }
                 }
             }
-            
+
         }
 
         public override void OnBlockRemoved()
@@ -181,19 +175,19 @@ namespace snitches
             if (activated)
             {
                 dsc.AppendLine("This Snitch is Activated!");
-            }            
+            }
 
-            foreach(string player in playersTracked)
+            foreach (string player in playersTracked)
             {
                 dsc.AppendLine(player + " currently being tracked!");
             }
 
-            if(violationsQueue.Count > 0)
+            if (violationsQueue.Count > 0)
             {
                 dsc.AppendLine(violationsQueue.Count + " violations!");
 
             }
-                        
+
 
         }
 
@@ -211,7 +205,7 @@ namespace snitches
             {
                 int counter = 0;
                 string tempString = "*----------5 Most Recent Breakins----------*";
-                     
+
                 (Api as ICoreServerAPI).SendMessage(byPlayer, 0, tempString, EnumChatType.Notification);
                 foreach (Violation violation in tempQueue)
                 {
@@ -239,7 +233,7 @@ namespace snitches
             //}
 
             return true;
-            
+
         }
 
         //private bool ConnectBook(IPlayer player)
@@ -257,10 +251,10 @@ namespace snitches
         //        righthand.Itemstack.Attributes.SetBlockPos("SnitchBlockConnection", Pos);
         //    }
 
-            
+
         //    return false;
         //}
-        
+
 
         public bool TryWriteViolations(IPlayer byPlayer)
         {
@@ -278,20 +272,20 @@ namespace snitches
             {
                 return false;
             }
-            
+
             bookMod.BeginEdit(snitchPlayer, bookSlot);
 
             string text = "";
             string title = "Violations pulled on " + Api.World.Calendar.PrettyDate();
-            
+
             int maxLogSize = 50 < violationsQueue.Count ? 50 : violationsQueue.Count;
-            
-            for(int i = 0; i < maxLogSize; i++)
+
+            for (int i = 0; i < maxLogSize; i++)
             {
                 text += (violationsQueue.Dequeue() + "\n");
             }
 
-            
+
 
             bookMod.EndEdit(snitchPlayer, text, title, true);
 
@@ -302,33 +296,33 @@ namespace snitches
         public bool AddViolation(ITreeAttribute tree, IWorldAccessor world)
         {
             return AddViolation(new Violation(tree, world), true);
-            
+
         }
 
-        
+
         public bool AddViolation(Violation violation, bool fromTree = false)
         {
             if (violation == null) return false;
 
-            
+
             tempQueue.Enqueue(violation);
             violationsQueue.Enqueue(violation);
 
             while (tempQueue.Count > 5) tempQueue.Dequeue();
-                     
-            
+
+
             MarkDirty();
             return true;
         }
 
         private void RecordCrimes(float obj)
         {
-            
+
         }
 
         private bool TryActivate()
         {
-            
+
             if (OnPlayerEnterListenerID == null)
             {
                 OnPlayerEnterListenerID = RegisterGameTickListener(OnPingPlayers, 50);
@@ -337,9 +331,9 @@ namespace snitches
             {
                 RecordCrimesListenerID = RegisterGameTickListener(RecordCrimes, 6000);
             }
-            if(activated)
+            if (activated)
             {
-                MarkDirty(); 
+                MarkDirty();
                 return false;
             }
 
@@ -347,22 +341,22 @@ namespace snitches
             MarkDirty();
 
             return true;
-        }        
-                       
+        }
+
 
         private void OnPingPlayers(float obj)
         {
-           
+
             IPlayer[] players = Api.World.GetPlayersAround(Pos.ToVec3d(), radius * radius, vertRange, (IPlayer player) =>
             {
                 return ShouldPingPlayer(player);
-                
+
             });
             playersPinged = new List<string>();
 
-            foreach(IPlayer player in players)
+            foreach (IPlayer player in players)
             {
-                
+
                 if (snitchMod.trackedPlayers.TryGetValue(player.PlayerName, out List<BESnitch> snitches))
                 {
                     if (!snitches.Contains(this))
@@ -379,7 +373,7 @@ namespace snitches
                 playersPinged.Add(player.PlayerName);
 
                 if (!playersTracked.Contains(player.PlayerName))
-                {                    
+                {
                     playersTracked.Add(player.PlayerName);
                     string date = Api.World.Calendar.PrettyDate();
                     string time = Api.World.Calendar.ElapsedSeconds.ToString();
@@ -388,42 +382,42 @@ namespace snitches
                         AddViolation(new Violation(Violation.TRESSPASSED, player as IServerPlayer, player.Entity.Pos.AsBlockPos, date, time));
                     }
                 }
-                                
+
             }
 
             List<string> ps = new List<string>();
 
-            foreach(string playerName in playersTracked)
+            foreach (string playerName in playersTracked)
             {
-                if(playersPinged.Contains(playerName)) { continue; }
-                                
-                if(snitchMod.trackedPlayers.TryGetValue(playerName, out List<BESnitch> snitches))
+                if (playersPinged.Contains(playerName)) { continue; }
+
+                if (snitchMod.trackedPlayers.TryGetValue(playerName, out List<BESnitch> snitches))
                 {
                     snitches.Remove(this);
-                                   
+
                 }
 
                 ps.Add(playerName);
-                
+
             }
 
             foreach (string playerName in ps)
             {
                 playersTracked.Remove(playerName);
             }
-            
-            
+
+
             if (Api.Side == EnumAppSide.Server)
             {
                 MarkDirty();
             }
-            
+
         }
 
         private bool ShouldPingPlayer(IPlayer player)
         {
             if (player.PlayerUID == currentOwnerUID) return false;
-            
+
             if (reinforceMod.IsReinforced(Pos))
             {
                 if (player.GetGroup(reinforceMod.GetReinforcment(Pos).GroupUid) != null)
@@ -433,7 +427,7 @@ namespace snitches
             }
 
             if (player.Entity.Controls.Sneak && Pos.DistanceTo(player.Entity.Pos.AsBlockPos) > trueSightRange) return false;
-            
+
             return true;
         }
 
@@ -450,19 +444,19 @@ namespace snitches
 
             if (activated)
             {
-                tempQueue = new Queue<Violation>();               
+                tempQueue = new Queue<Violation>();
                 violationsQueue = new Queue<Violation>();
                 for (int counter = 0; counter < violationCount; counter++)
                 {
-                    
+
                     ITreeAttribute violation = violationTree.GetTreeAttribute(counter.ToString());
                     AddViolation(violation, worldAccessForResolve);
                 }
-                               
+
 
             }
 
-            
+
         }
 
         public override void ToTreeAttributes(ITreeAttribute tree)
@@ -476,25 +470,25 @@ namespace snitches
 
             var violationTree = tree.GetOrAddTreeAttribute("violations");
 
-            if (activated && violationsQueue.Count > 0 )
+            if (activated && violationsQueue.Count > 0)
             {
                 int counter = 0;
-                
-                foreach(Violation violation in violationsQueue)
+
+                foreach (Violation violation in violationsQueue)
                 {
                     ITreeAttribute count = violationTree.GetOrAddTreeAttribute(counter.ToString());
                     violation.ToTreeAttributes(count);
 
                     counter++;
                 }
-                
-                
+
+
             }
 
-            if(activated && tempQueue.Count > 0)
+            if (activated && tempQueue.Count > 0)
             {
                 int counter = 0;
-                foreach(Violation violation in tempQueue)
+                foreach (Violation violation in tempQueue)
                 {
                     ITreeAttribute count = violationTree.GetOrAddTreeAttribute("temp" + counter.ToString());
                     violation.ToTreeAttributes(count);
@@ -505,7 +499,7 @@ namespace snitches
 
         }
 
-        
+
 
 
 

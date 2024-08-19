@@ -1,11 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using Newtonsoft.Json;
 using Vintagestory.API.Common;
-using Vintagestory.API.Server;
 
 namespace snitches
 {
@@ -16,7 +11,7 @@ namespace snitches
         private ICoreAPI sapi;
 
         [JsonProperty]
-        public bool snitchSneakable = false;        
+        public bool snitchSneakable = false;
         [JsonProperty]
         public int snitchRadius = 16;
         [JsonProperty]
@@ -28,7 +23,7 @@ namespace snitches
         [JsonProperty]
         public int maxBookLog = 500;
         [JsonProperty]
-        public int maxPaperLog = 100;          
+        public int maxPaperLog = 100;
 
         public SnitchesServerConfig(ICoreAPI api)
         {
@@ -51,8 +46,8 @@ namespace snitches
                 snitchTruesightRange = vintageRealmsServerConfig.snitchTruesightRange;
                 maxSnitchLog = vintageRealmsServerConfig.maxSnitchLog;
                 maxBookLog = vintageRealmsServerConfig.maxBookLog;
-                maxPaperLog = vintageRealmsServerConfig.maxPaperLog;                   
-                                
+                maxPaperLog = vintageRealmsServerConfig.maxPaperLog;
+
             }
             catch (Exception ex)
             {
