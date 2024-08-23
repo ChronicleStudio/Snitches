@@ -1,22 +1,21 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using Snitches.BlockEntities;
+using System.Collections.Generic;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 
-namespace snitches
+namespace Snitches.Blocks
 {
-    internal class BlockSnitch : Block
+    public class BlockSnitch : Block
     {
         WorldInteraction[] interactions;
 
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
-            BESnitch snitch = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BESnitch;
+            BlockEntitySnitch snitch = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BlockEntitySnitch;
 
             return snitch?.OnInteract(byPlayer) == true;
-
         }
 
         public override void OnLoaded(ICoreAPI api)
@@ -44,22 +43,13 @@ namespace snitches
                 return new WorldInteraction[]{
                     new WorldInteraction() {
                         ActionLangCode = "blockhelp-snitch-activate",
-                        HotKeyCode = "ctrl",
+                        HotKeyCode = "shift",
                         MouseButton = EnumMouseButton.Right,
                         ShouldApply = (wi, bs, es) => {
-                            BESnitch bes = api.World.BlockAccessor.GetBlockEntity(bs.Position) as BESnitch;
-                            return bes?.activated != true;
+                            BlockEntitySnitch bes = api.World.BlockAccessor.GetBlockEntity(bs.Position) as BlockEntitySnitch;
+                            return bes?.Activated != true;
                         }
-                    },
-                    new WorldInteraction()
-                    {
-                        ActionLangCode = "blockhelp-snitch-5mostrecentviolations",
-                        MouseButton = EnumMouseButton.Right,
-                        ShouldApply = (wi, bs, es) => {
-                            BESnitch bes = api.World.BlockAccessor.GetBlockEntity(bs.Position) as BESnitch;
-                            return bes?.activated == true;
-                        }
-                    },
+                    },                    
                     new WorldInteraction()
                     {
                         ActionLangCode = "blockhelp-snitch-writeviolations",
@@ -68,8 +58,8 @@ namespace snitches
                         Itemstacks = bookStackList.ToArray(),
 
                         ShouldApply = (wi, bs, es) => {
-                            BESnitch bes = api.World.BlockAccessor.GetBlockEntity(bs.Position) as BESnitch;
-                            return bes?.activated == true;
+                            BlockEntitySnitch bes = api.World.BlockAccessor.GetBlockEntity(bs.Position) as BlockEntitySnitch;
+                            return bes?.Activated == true;
                         }
                     }
                 };
