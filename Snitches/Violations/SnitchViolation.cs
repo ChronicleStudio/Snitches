@@ -48,7 +48,8 @@ namespace Snitches.Violation
             this.playerUID = player.PlayerUID;
             this.position = pos;
             BlockName = block?.GetPlacedBlockName(player.Entity.World, pos);
-            EntityName = entity?.Code.Domain + ":item-creature-" + entity?.Code.Path;
+            //EntityName = entity?.Code.Domain + ":item-creature-" + entity?.Code.Path;
+            EntityName = entity?.GetName();
             CollectibleName = colObj?.Code.GetName();
 
             this.PrettyDate = prettyDate;
@@ -65,7 +66,8 @@ namespace Snitches.Violation
             this.playerUID = player.PlayerUID;
             this.position = pos;
             BlockName = block?.GetPlacedBlockName(player.World, pos);
-            EntityName = entity?.Code.Domain + ":item-creature-" + entity?.Code.Path;
+			EntityName = entity?.GetName();
+			//EntityName = entity?.Code.Domain + ":item-creature-" + entity?.Code.Path;
             CollectibleName = colObj?.Code.GetName();
 
             this.PrettyDate = prettyDate;
@@ -88,7 +90,8 @@ namespace Snitches.Violation
                 EnumViolationType.Trespassed => "tresspassed",
                 EnumViolationType.Escaped => "escaped",
                 EnumViolationType.BlockUsed => "used " + BlockName,
-                EnumViolationType.BlockBroke => "placed " + BlockName,
+                EnumViolationType.BlockPlaced => "placed " + BlockName,
+                EnumViolationType.BlockBroke => "broke " + BlockName,
 			    EnumViolationType.ReinforcementBroke => "reinforcement broken",
 				EnumViolationType.ReinforcementPlaced => "reinforcement placed",
 			    EnumViolationType.EntityInteracted => "interacted with " + EntityName,

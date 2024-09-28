@@ -183,7 +183,7 @@ namespace Snitches.Violations
 				chunk.SetServerModdata("Snitches", chunkData.Serialize());
 			};
 			return chunkData;
-		}
+		}			
 
 	}
 }

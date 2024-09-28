@@ -13,12 +13,23 @@ namespace Snitches.Events
 {
 	public static class SnitchEventsServer
 	{
+		//Violations for Entities being hit is handled inside of the EntityBehaviorSnitchEntityHitTrigger
+		//Violations for Reinforcing with a plumb and square will be handled inside of the plumb and 
+
+
+
+		/// <summary>
+		/// Logs a violation for Breaking a block and breaking a level of reinforcement
+		/// </summary>
+		/// <param name="byPlayer"></param>
+		/// <param name="oldblockId"></param>
+		/// <param name="blockSel"></param>
 		public static void DidBreakBlock(IServerPlayer byPlayer, int oldblockId, BlockSelection blockSel)
 		{
 			ICoreAPI sapi = byPlayer.Entity.Api;
 			SnitchesModSystem SnitchMod = sapi.ModLoader.GetModSystem<SnitchesModSystem>();
 
-			if (SnitchMod.trackedPlayers.TryGetValue(byPlayer.PlayerName, out List<BlockEntitySnitch> snitches))
+			if (SnitchMod.trackedPlayers.TryGetValue(byPlayer.PlayerUID, out List<BlockEntitySnitch> snitches))
 			{
 				if (snitches != null)
 				{
@@ -51,26 +62,33 @@ namespace Snitches.Events
 			}
 		}
 
+		/// <summary>
+		/// Logs a violation for placing a block
+		/// </summary>
+		/// <param name="byPlayer"></param>
+		/// <param name="oldblockId"></param>
+		/// <param name="blockSel"></param>
+		/// <param name="withItemStack"></param>
 		public static void DidPlaceBlock(IServerPlayer byPlayer, int oldblockId, BlockSelection blockSel, ItemStack withItemStack)
 		{
-			ICoreAPI sapi = byPlayer.Entity.Api;
-			SnitchesModSystem SnitchMod = sapi.ModLoader.GetModSystem<SnitchesModSystem>();
+			ICoreAPI api = byPlayer.Entity.Api;
+			SnitchesModSystem SnitchMod = api.ModLoader.GetModSystem<SnitchesModSystem>();
 
 			ItemSlot itemSlot = byPlayer?.InventoryManager?.GetHotbarInventory()?[10];
 			EnumHandHandling handling = EnumHandHandling.Handled;
 			BlockPos position = blockSel.Position;
 			(itemSlot?.Itemstack?.Item as ItemPlumbAndSquare)?.OnHeldInteractStart(itemSlot, byPlayer.Entity, blockSel, null, firstEvent: true, ref handling);
 
-			if (SnitchMod.trackedPlayers.TryGetValue(byPlayer.PlayerName, out List<BlockEntitySnitch> snitches))
+			if (SnitchMod.trackedPlayers.TryGetValue(byPlayer.PlayerUID, out List<BlockEntitySnitch> snitches))
 			{
 				if (snitches != null)
 				{
 					foreach (BlockEntitySnitch s in snitches)
 					{
-						string prettyDate = sapi.World.Calendar.PrettyDate();
-						double day = sapi.World.Calendar.ElapsedDays;
-						long time = sapi.World.Calendar.ElapsedSeconds;
-						int year = sapi.World.Calendar.Year;
+						string prettyDate = api.World.Calendar.PrettyDate();
+						double day = api.World.Calendar.ElapsedDays;
+						long time = api.World.Calendar.ElapsedSeconds;
+						int year = api.World.Calendar.Year;
 
 						SnitchViolation violation = new SnitchViolation(EnumViolationType.BlockPlaced, byPlayer, blockSel.Position, prettyDate, day, time, year, withItemStack.Block);
 
@@ -81,13 +99,19 @@ namespace Snitches.Events
 			}
 		}
 
+
+		/// <summary>
+		/// Logs a violation for using a block
+		/// </summary>
+		/// <param name="byPlayer"></param>
+		/// <param name="blockSel"></param>
 		public static void DidUseBlock(IServerPlayer byPlayer, BlockSelection blockSel)
 		{			
 			ICoreAPI sapi = byPlayer.Entity.Api;					
 
 			SnitchesModSystem SnitchMod = sapi.ModLoader.GetModSystem<SnitchesModSystem>();
 
-			if (SnitchMod.trackedPlayers.TryGetValue(byPlayer.PlayerName, out List<BlockEntitySnitch> snitches))
+			if (SnitchMod.trackedPlayers.TryGetValue(byPlayer.PlayerUID, out List<BlockEntitySnitch> snitches))
 			{
 				if (snitches != null)
 				{
@@ -105,32 +129,33 @@ namespace Snitches.Events
 					}
 				}
 			}
-		}
+		}				
 
-		private static void UseBlockHelper(float obj)
-		{
-			throw new NotImplementedException();
-		}
 
+		/// <summary>
+		/// Logs a violation for an entity dying
+		/// </summary>
+		/// <param name="entity"></param>
+		/// <param name="damageSource"></param>
 		public static void OnEntityDeath(Entity entity, DamageSource damageSource)
 		{		
 
 			if (damageSource == null) return;
 			if (damageSource.GetCauseEntity() == null || !(damageSource.GetCauseEntity() is EntityPlayer)) return;
 			IServerPlayer byPlayer = (damageSource.SourceEntity as EntityPlayer).Player as IServerPlayer;
-			ICoreAPI sapi = byPlayer.Entity.Api;
-			SnitchesModSystem SnitchMod = sapi.ModLoader.GetModSystem<SnitchesModSystem>();
+			ICoreAPI api = byPlayer.Entity.Api;
+			SnitchesModSystem SnitchMod = api.ModLoader.GetModSystem<SnitchesModSystem>();
 
-			if (SnitchMod.trackedPlayers.TryGetValue(byPlayer.PlayerName, out List<BlockEntitySnitch> snitches))
+			if (SnitchMod.trackedPlayers.TryGetValue(byPlayer.PlayerUID, out List<BlockEntitySnitch> snitches))
 			{
 				if (snitches != null)
 				{
 					foreach (BlockEntitySnitch s in snitches)
 					{
-						string prettyDate = sapi.World.Calendar.PrettyDate();
-						double day = sapi.World.Calendar.ElapsedDays;
-						long time = sapi.World.Calendar.ElapsedSeconds;
-						int year = sapi.World.Calendar.Year;
+						string prettyDate = api.World.Calendar.PrettyDate();
+						double day = api.World.Calendar.ElapsedDays;
+						long time = api.World.Calendar.ElapsedSeconds;
+						int year = api.World.Calendar.Year;
 
 						SnitchViolation violation = new SnitchViolation(EnumViolationType.EntityKilled, byPlayer, entity.Pos.AsBlockPos, prettyDate, day, time, year, null, entity);
 
@@ -139,10 +164,6 @@ namespace Snitches.Events
 				}
 			}
 		}
-
-		public static void OnPlayerInteractEntity(Entity entity, IPlayer byPlayer, ItemSlot slot, Vec3d hitPosition, int mode, ref EnumHandling handling)
-		{
-			throw new NotImplementedException();
-		}
+				
 	}
 }

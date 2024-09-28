@@ -1,11 +1,13 @@
 ﻿using Snitches.BlockEntities;
 using Snitches.Blocks;
 using Snitches.Config;
+using Snitches.EntityBehaviors;
 using Snitches.Events;
 using Snitches.Violation;
 using System;
 using System.Collections.Generic;
 using Vintagestory.API.Common;
+using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Server;
 
 
@@ -41,18 +43,29 @@ namespace Snitches
         }
        
         public override void StartServerSide(ICoreServerAPI api)
-        {
-            api.Event.OnPlayerInteractEntity += SnitchEventsServer.OnPlayerInteractEntity;
-            api.Event.OnEntityDeath += SnitchEventsServer.OnEntityDeath;
+        {		
+
+			api.Event.OnEntityLoaded += AddEntityBehaviors;
+			api.Event.OnEntitySpawn += AddEntityBehaviors;
+
+			api.Event.OnEntityDeath += SnitchEventsServer.OnEntityDeath;
 
             api.Event.DidUseBlock += SnitchEventsServer.DidUseBlock;
             api.Event.DidPlaceBlock += SnitchEventsServer.DidPlaceBlock;
             api.Event.DidBreakBlock += SnitchEventsServer.DidBreakBlock;
 
             base.StartServerSide(api);
-        }                
+        }
+        
+
+        private void AddEntityBehaviors(Entity entity)
+		{
+			if (entity != null && !entity.HasBehavior<EntityBehaviorSnitchOnEntityHitTrigger>())
+			{
+				entity.AddBehavior(new EntityBehaviorSnitchOnEntityHitTrigger(entity));
+			}
+		}
 
         
-        
-    }
+	}
 }

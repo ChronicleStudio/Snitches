@@ -124,20 +124,18 @@ namespace Snitches.BlockEntities
 		{
 			base.OnBlockUnloaded();
 			RemoveSnitches();
-
 		}
 
 		public override void OnBlockRemoved()
 		{
 			base.OnBlockRemoved();
-			RemoveSnitches();
-
+			RemoveSnitches();	
 		}
 
 		public override void OnBlockBroken(IPlayer byPlayer = null)
 		{
 			base.OnBlockBroken(byPlayer);
-			RemoveSnitches();
+			RemoveSnitches();			
 		}
 
 		public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
@@ -245,17 +243,17 @@ namespace Snitches.BlockEntities
 		private void OnPingPlayers(float obj)
 		{
 
-			IPlayer[] players = Api.World.GetPlayersAround(Pos.ToVec3d(), Radius, VertRange, (IPlayer player) =>
+			List<IPlayer> players = Api.World.GetPlayersAround(Pos.ToVec3d(), Radius, VertRange, (IPlayer player) =>
 			{
 				return ShouldPingPlayer(player);
 
-			});
+			}).ToList<IPlayer>();
 			playersPinged = new List<string>();
 
 			foreach (IPlayer player in players)
 			{
 
-				if (snitchMod.trackedPlayers.TryGetValue(player.PlayerName, out List<BlockEntitySnitch> snitches))
+				if (snitchMod.trackedPlayers.TryGetValue(player.PlayerUID, out List<BlockEntitySnitch> snitches))
 				{
 					if (!snitches.Contains(this))
 					{
@@ -266,19 +264,20 @@ namespace Snitches.BlockEntities
 				{
 					var sn = new List<BlockEntitySnitch>();
 					sn.Add(this);
-					snitchMod.trackedPlayers.Add(player.PlayerName, sn);
+					snitchMod.trackedPlayers.Add(player.PlayerUID, sn);
 				}
-				playersPinged.Add(player.PlayerName);
+				playersPinged.Add(player.PlayerUID);
 
-				if (!playersTracked.Contains(player.PlayerName))
+				if (!playersTracked.Contains(player.PlayerUID))
 				{
-					playersTracked.Add(player.PlayerName);
-					string prettyDate = Api.World.Calendar.PrettyDate();
-					double day = Api.World.Calendar.ElapsedDays;
-					long time = Api.World.Calendar.ElapsedSeconds;
-					int year = Api.World.Calendar.Year;
+					playersTracked.Add(player.PlayerUID);
+					
 					if (Api.Side == EnumAppSide.Server)
 					{
+						string prettyDate = Api.World.Calendar.PrettyDate();
+						double day = Api.World.Calendar.ElapsedDays;
+						long time = Api.World.Calendar.ElapsedSeconds;
+						int year = Api.World.Calendar.Year;
 						AddViolation(new SnitchViolation(EnumViolationType.Trespassed, player as IServerPlayer, player.Entity.Pos.AsBlockPos, prettyDate, day, time, year));
 					}
 				}
@@ -286,20 +285,28 @@ namespace Snitches.BlockEntities
 
 			List<string> ps = new List<string>();
 
-			foreach (string playerName in playersTracked)
+			foreach (string playerUID in playersTracked)
 			{
-				if (playersPinged.Contains(playerName)) { continue; }
+				if (playersPinged.Contains(playerUID)) { continue; }
 
-				if (snitchMod.trackedPlayers.TryGetValue(playerName, out List<BlockEntitySnitch> snitches))
+				if (snitchMod.trackedPlayers.TryGetValue(playerUID, out List<BlockEntitySnitch> snitches))
 				{
+					var player = Api.World.PlayerByUid(playerUID);
+
+					string prettyDate = Api.World.Calendar.PrettyDate();
+					double day = Api.World.Calendar.ElapsedDays;
+					long time = Api.World.Calendar.ElapsedSeconds;
+					int year = Api.World.Calendar.Year;
+					AddViolation(new SnitchViolation(EnumViolationType.Escaped, player as IServerPlayer, player.Entity.Pos.AsBlockPos, prettyDate, day, time, year));
+
 					snitches.Remove(this);
 				}
-				ps.Add(playerName);
+				ps.Add(playerUID);
 			}
 
-			foreach (string playerName in ps)
+			foreach (string playerUID in ps)
 			{
-				playersTracked.Remove(playerName);
+				playersTracked.Remove(playerUID);
 			}
 
 			if (Api.Side == EnumAppSide.Server)
@@ -336,5 +343,7 @@ namespace Snitches.BlockEntities
 				}
 			}
 		}
+
+		
 	}
 }
